@@ -758,6 +758,7 @@ class Command(Generic[GroupT, P, T]):
 
         if self.parent is None:
             base['nsfw'] = self.nsfw
+            base['integration_types'] = [0,1] #temp 
             base['dm_permission'] = not self.guild_only
             base['default_member_permissions'] = None if self.default_permissions is None else self.default_permissions.value
 
