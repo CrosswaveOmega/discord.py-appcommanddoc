@@ -40,6 +40,7 @@ from typing import (
     TYPE_CHECKING,
     Tuple,
     Type,
+    Literal,
     TypeVar,
     Union,
     overload,
@@ -107,6 +108,8 @@ Error = Union[
 Check = Callable[['Interaction[Any]'], Union[bool, Coro[bool]]]
 Binding = Union['Group', 'commands.Cog']
 
+ApplicationIntegrationType=Literal[0,1]
+InteractionContextType=Literal[0,1,2]
 
 if TYPE_CHECKING:
     CommandCallback = Union[
@@ -616,11 +619,15 @@ class Command(Generic[GroupT, P, T]):
         Due to a Discord limitation, this does not work on subcommands.
     guild_only: :class:`bool`
         Whether the command should only be usable in guild contexts.
-
         Due to a Discord limitation, this does not work on subcommands.
+    integration_types: List[:class:`ApplicationIntegrationType`]
+        Installation context(s) where the command is available, only for globally-scoped commands. 
+        Defaults to GUILD_INSTALL (0)
+    contexts:List[:class:`InteractionContextType`]
+        Interaction context(s) where the command can be used, only for globally-scoped commands. 
+        By default, set to all interaction context types included for new commands.
     nsfw: :class:`bool`
         Whether the command is NSFW and should only work in NSFW channels.
-
         Due to a Discord limitation, this does not work on subcommands.
     parent: Optional[:class:`Group`]
         The parent application command. ``None`` if there isn't one.
@@ -672,6 +679,8 @@ class Command(Generic[GroupT, P, T]):
             callback, '__discord_app_commands_default_permissions__', None
         )
         self.guild_only: bool = getattr(callback, '__discord_app_commands_guild_only__', False)
+        self.integration_types: List[ApplicationIntegrationType] = [0,1]
+        self.contexts:List[InteractionContextType]=[0,1,2]
         self.nsfw: bool = nsfw
         self.extras: Dict[Any, Any] = extras or {}
 
@@ -758,7 +767,8 @@ class Command(Generic[GroupT, P, T]):
 
         if self.parent is None:
             base['nsfw'] = self.nsfw
-            base['integration_types'] = [0,1] #temp 
+            base['integration_types'] = self.integration_types
+            base['contexts'] = self.contexts
             base['dm_permission'] = not self.guild_only
             base['default_member_permissions'] = None if self.default_permissions is None else self.default_permissions.value
 
@@ -1412,6 +1422,12 @@ class Group:
         Due to a Discord limitation, this does not work on subcommands.
     parent: Optional[:class:`Group`]
         The parent group. ``None`` if there isn't one.
+    integration_types: List[:class:`ApplicationIntegrationType`]
+        Installation context(s) where the command is available, only for globally-scoped commands. 
+        Defaults to GUILD_INSTALL (0)
+    contexts:List[:class:`InteractionContextType`]
+        Interaction context(s) where the command can be used, only for globally-scoped commands. 
+        By default, set to all interaction context types included for new commands.
     extras: :class:`dict`
         A dictionary that can be used to store extraneous data.
         The library will not touch any values or keys within this dictionary.
@@ -1553,6 +1569,8 @@ class Group:
             raise TypeError('groups must have a name')
 
         self.parent: Optional[Group] = parent
+        self.integration_types: List[ApplicationIntegrationType] = [0,1]
+        self.contexts:List[InteractionContextType]=[0,1,2]
         self.module: Optional[str]
         if cls.__discord_app_commands_has_module__:
             self.module = cls.__module__
@@ -1671,6 +1689,8 @@ class Group:
 
         if self.parent is None:
             base['nsfw'] = self.nsfw
+            base['integration_types'] = self.integration_types
+            base['contexts'] = self.contexts
             base['dm_permission'] = not self.guild_only
             base['default_member_permissions'] = None if self.default_permissions is None else self.default_permissions.value
 

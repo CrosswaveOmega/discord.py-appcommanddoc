@@ -56,6 +56,7 @@ __all__ = (
     'PrivacyLevel',
     'InteractionType',
     'InteractionResponseType',
+    'InteractionContextType'
     'NSFWLevel',
     'MFALevel',
     'Locale',
@@ -64,6 +65,7 @@ __all__ = (
     'AppCommandType',
     'AppCommandOptionType',
     'AppCommandPermissionType',
+    'AppIntegrationType',
     'AutoModRuleTriggerType',
     'AutoModRuleEventType',
     'AutoModRuleActionType',
@@ -604,6 +606,10 @@ class InteractionResponseType(Enum):
     modal = 9  # for modals
     premium_required = 10
 
+class InteractionContextType(Enum):
+    guild = 0
+    botdm = 1
+    privatechannel = 2
 
 class VideoQualityMode(Enum):
     auto = 1
@@ -756,6 +762,9 @@ class AppCommandPermissionType(Enum):
     user = 2
     channel = 3
 
+class AppIntegrationType(Enum):
+    guild = 0
+    user = 1
 
 class AutoModRuleTriggerType(Enum):
     keyword = 1

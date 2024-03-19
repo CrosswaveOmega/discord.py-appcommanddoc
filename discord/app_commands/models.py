@@ -163,6 +163,12 @@ class AppCommand(Hashable):
     guild_id: Optional[:class:`int`]
         The ID of the guild this command is registered in. A value of ``None``
         denotes that it is a global command.
+    integration_types: List[int]
+        Installation context(s) where the command is available, only for globally-scoped commands. 
+        Defaults to GUILD_INSTALL (0)
+    contexts: List[int]
+         Interaction context(s) where the command can be used, only for globally-scoped commands. 
+         By default, all interaction context types are enabled for new commands.
     nsfw: :class:`bool`
         Whether the command is NSFW and should only work in NSFW channels.
     """
@@ -180,6 +186,8 @@ class AppCommand(Hashable):
         'default_member_permissions',
         'dm_permission',
         'nsfw',
+        'integration_types',
+        'contexts',
         '_state',
     )
 
@@ -197,6 +205,7 @@ class AppCommand(Hashable):
         self.options: List[Union[Argument, AppCommandGroup]] = [
             app_command_option_factory(data=d, parent=self, state=self._state) for d in data.get('options', [])
         ]
+        
         self.default_member_permissions: Optional[Permissions]
         permissions = data.get('default_member_permissions')
         if permissions is None:
@@ -213,6 +222,9 @@ class AppCommand(Hashable):
         self.nsfw: bool = data.get('nsfw', False)
         self.name_localizations: Dict[Locale, str] = _to_locale_dict(data.get('name_localizations') or {})
         self.description_localizations: Dict[Locale, str] = _to_locale_dict(data.get('description_localizations') or {})
+
+        self.integration_types=data.get('integration_types',[0,1])
+        self.contexts=data.get('contexts',[0,1,2])
 
     def to_dict(self) -> ApplicationCommandPayload:
         return {
