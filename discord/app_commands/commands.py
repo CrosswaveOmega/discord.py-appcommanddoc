@@ -1261,6 +1261,7 @@ class ContextMenu:
             'type': self.type.value,
             'dm_permission': not self.guild_only,
             'default_member_permissions': None if self.default_permissions is None else self.default_permissions.value,
+            'integration_types': [0,1],
             'nsfw': self.nsfw,
         }
 
