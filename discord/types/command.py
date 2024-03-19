@@ -145,6 +145,8 @@ class _BaseApplicationCommand(TypedDict):
     default_member_permissions: NotRequired[Optional[str]]
     nsfw: NotRequired[bool]
     version: Snowflake
+    integration_types: NotRequired[List[int]]
+    contexts: NotRequired[List[int]]
     name_localizations: NotRequired[Optional[Dict[str, str]]]
     description_localizations: NotRequired[Optional[Dict[str, str]]]
 
