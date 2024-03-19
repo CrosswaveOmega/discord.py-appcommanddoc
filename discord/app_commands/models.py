@@ -163,10 +163,10 @@ class AppCommand(Hashable):
     guild_id: Optional[:class:`int`]
         The ID of the guild this command is registered in. A value of ``None``
         denotes that it is a global command.
-    integration_types: List[int]
+    integration_types: List[:class:`int`]
         Installation context(s) where the command is available, only for globally-scoped commands. 
         Defaults to GUILD_INSTALL (0)
-    contexts: List[int]
+    contexts: List[:class:`int`]
          Interaction context(s) where the command can be used, only for globally-scoped commands. 
          By default, all interaction context types are enabled for new commands.
     nsfw: :class:`bool`
@@ -236,6 +236,8 @@ class AppCommand(Hashable):
             'name_localizations': {str(k): v for k, v in self.name_localizations.items()},
             'description_localizations': {str(k): v for k, v in self.description_localizations.items()},
             'options': [opt.to_dict() for opt in self.options],
+            'contexts': self.contexts,
+            'integration_types': self.integration_types
         }  # type: ignore # Type checker does not understand this literal.
 
     def __str__(self) -> str:
